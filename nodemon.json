@@ -1,0 +1,5 @@
+{
+    "exec": "deno run --allow-net main.ts",
+    "watch": ["main.ts"],
+    "ext": "ts,js,json"
+  }
