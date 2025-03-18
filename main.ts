@@ -1,44 +1,34 @@
 import { Hono } from "jsr:@hono/hono";
+import mssql from "npm:mssql";
 
 const app = new Hono();
 
-let users = [
-  { id: 1, name: "John Doe" },
-  { id: 2, name: "Jane Doe" },
-];
+// Configuración de conexión a la base de datos
+const sqlConfig = {
+  user: "cherrera",
+  password: "contrasena123",
+  server: "192.168.51.240",
+  database: "DenoTest",
+  port: 1433,
+  options: {
+    trustServerCertificate: true,
+  },
+  connectionTimeout: 60000, // 60 segundos
+  requestTimeout: 60000, // 60 segundos
+};
 
-// Root endpoint
-app.get("/", (c) => {
-  return c.text("Hello from Deno!");
-});
-
-// Example of a GET endpoint
-app.get("/api/users", (c) => {
-  return c.json(users);
-});
-
-// Example of a POST endpoint
-app.post("/api/users", async (c) => {
-  const body = await c.req.json();
-  const newUser = { id: Date.now(), ...body };
-  users.push(newUser);
-  return c.json(newUser, 201);
-});
-
-// Example of a PUT endpoint
-app.put("/api/users/:id", async (c) => {
-  const id = parseInt(c.req.param("id"));
-  const body = await c.req.json();
-  users = users.map((user) => (user.id === id ? { id, ...body } : user));
-  return c.json({ id, ...body });
-});
-
-// Example of a DELETE endpoint
-app.delete("/api/users/:id", (c) => {
-  const id = parseInt(c.req.param("id"));
-  users = users.filter((user) => user.id !== id);
-  c.status(204);
-  return c.text("");
+// Ruta GET para obtener usuarios
+app.get("/api/users", async (c) => {
+  try {
+    // Establecer la conexión dentro de la ruta para manejar errores individuales.
+    const pool = await mssql.connect(sqlConfig);
+    const result = await pool.request().query("SELECT * FROM Usuarios");
+    pool.close(); // Cerrar la conexión después de la consulta.
+    return c.json(result.recordset);
+  } catch (error) {
+    console.error("Error al obtener usuarios:", error);
+    return c.json({ error: "Error al obtener usuarios" }, 500); // Devolver un error 500
+  }
 });
 
 Deno.serve({ port: 3000, handler: app.fetch });

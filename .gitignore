@@ -1,0 +1,23 @@
+# Node modules
+node_modules/
+
+# Deno cache
+deno_dir/
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# Compiled output
+dist/
+build/
+
+# Temporary files
+*.tmp
+*.swp
+
+# OS generated files
+.DS_Store
+Thumbs.db
