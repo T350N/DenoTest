@@ -1,15 +1,16 @@
 import { Hono } from "jsr:@hono/hono";
 import mssql from "npm:mssql";
+import "https://deno.land/x/dotenv@v3.2.2/load.ts";
 
 const app = new Hono();
 
 // Configuración de conexión a la base de datos
 const sqlConfig = {
-  user: "cherrera",
-  password: "contrasena123",
-  server: "192.168.51.240",
-  database: "DenoTest",
-  port: 1433,
+  user: Deno.env.get("DB_USER") || "",
+  password: Deno.env.get("DB_PASSWORD") || "",
+  server: Deno.env.get("DB_SERVER") || "",
+  database: Deno.env.get("DB_DATABASE") || "",
+  port: parseInt(Deno.env.get("DB_PORT") || "1433"),
   options: {
     trustServerCertificate: true,
   },
