@@ -10,6 +10,8 @@ deno_dir/
 # Environment variables
 .env
 
+# archivos de config innecesarios
+*.json
 # Compiled output
 dist/
 build/
